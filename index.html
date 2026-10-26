@@ -472,6 +472,48 @@ $("qSend").addEventListener("click",function(){
 $("qNew").addEventListener("click",function(){$("nm").value="";$("ab").value="";$("qMain").hidden=true;$("qGate").hidden=false;$("qSend").disabled=false;myId="";window.scrollTo(0,0);$("nm").focus()});
 
 })();
+ // ===== KIRIM JAWABAN KE JOTFORM =====
+const JOTFORM_ID = "262983878370070";
+
+async function kirimKeJotform(nama, absen, skor, jawaban) {
+  const body = new FormData();
+  body.append("formID", JOTFORM_ID);
+  body.append("q3_nama", nama);
+  body.append("q5_noAbsen", absen);
+  body.append("q6_skor", skor);
+  for (let i = 0; i < 10; i++) {
+    body.append("q" + (7 + i) + "_jawaban" + (i + 1), jawaban[i] || "");
+  }
+  await fetch("https://submit.jotform.com/submit/" + JOTFORM_ID, {
+    method: "POST",
+    mode: "no-cors",
+    body: body
+  });
+}
+
+const tombolKirim = [...document.querySelectorAll("button")]
+  .find(b => b.textContent.includes("Kirim Semua Jawaban"));
+
+tombolKirim.addEventListener("click", async () => {
+  const nama = prompt("Tulis nama lengkap:");
+  const absen = prompt("Tulis nomor absen:");
+  if (!nama || !absen) {
+    alert("Nama dan nomor absen harus diisi.");
+    return;
+  }
+
+  // ===== BAGIAN INI HARUS DISESUAIKAN =====
+  const skorMurid = skor;        // ganti dengan variabel skor di kode kuis Anda
+  const jawabanMurid = jawaban;  // ganti dengan variabel daftar jawaban (10 item)
+  // ========================================
+
+  try {
+    await kirimKeJotform(nama, absen, skorMurid, jawabanMurid);
+    alert("Jawaban sudah dikirim. Terima kasih!");
+  } catch (e) {
+    alert("Gagal mengirim. Periksa internet lalu coba lagi.");
+  }
+});
 </script>
 </body>
 </html>
